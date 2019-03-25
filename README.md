@@ -1,1 +1,2 @@
-# Darwin
+# The Darwin Project
+DP is an application which will simulate the evolution of various creatures using machine learning. The applicaiton is based around **survival of the fittest**. By randomly generating various creatures with randomized skill sets, the application can be used to visualize the survival of said creatures. Is there a specific attribute set that makes one creature more prevalent. 

@@ -1,8 +1,5 @@
-class SimpleBoundary {
+class WorldBoundary {
 
-    /**
-     * @constructor
-     */
     constructor() {
         this.ground = Matter.Bodies.rectangle(width / 2, height - 15, width, 50, {
             isStatic: true,

@@ -1,104 +1,77 @@
-let person;
-let boundary;
-let creatures = []
-
+// module aliases
 const Render = Matter.Render
-const engine = Matter.Engine.create();
+const engine = Matter.Engine.create()
 const world = engine.world;
-const generationPeriod = 20;
-let generation = new Generation(25);
-let settled = false;
+const Bodies = Matter.Bodies;
+const Body = Matter.Body;
+const Bounds = Matter.Bounds;
+const Detector = Matter.Detector;
+const Mouse = Matter.Mouse;
+const MouseConstraint = Matter.MouseConstraint;
+const SAT = Matter.SAT;
+const Vertices = Matter.Vertices;
+
+
+var dots = [];
+let boundary;
+
 
 function setup() {
-	let canvas = createCanvas(windowWidth * 0.95, windowHeight * 0.95);
-	frameRate(60);
-	rectMode(CENTER);
-	textSize(18)
-	fill(255);
+    let canvas = createCanvas(windowWidth * 0.95, windowHeight * 0.95);
+    frameRate(60);
+    rectMode(CENTER);
+    fill(255);
 
-	// Initialize Generation
-	generation.initialize(Person);
-	generation.species.forEach((creature) => { creature.add_to_world(world) });
+    boundary = new WorldBoundary();
+    boundary.add_to_world();
+    world.gravity.scale = 0
 
-	// Boundary
-	boundary = new SimpleBoundary();
-	boundary.add_to_world();
+    
+    let canvas_mouse = Mouse.create(canvas.elt);
+    canvas_mouse.pixelRatio = pixelDensity();
+    let options = {
+      mouse: canvas_mouse
+    }
 
-	// Mouse Constraint
-	let canvasMouse = Matter.Mouse.create(canvas.elt);
-	canvasMouse.pixelRatio = pixelDensity();
-	let m = Matter.MouseConstraint.create(engine, { mouse: canvasMouse });
-	Matter.World.add(world, m);
-
-	// Restart Generation after 5 seconds
-	setInterval(() => {
-		generation.evolve();
-		console.log(generation.avg_score);
-		settled = false;
-	}, generationPeriod * 1000);
-
-	// Run the renderer
-	// let render = Render.create({
-	// 	element: document.body,
-	// 	engine: engine,
-	// 	options: {
-	// 		height, width
-	// 	}
-	// })
-	// Render.run(render);
-
-	// let renderMouse = Matter.Mouse.create(render.canvas);
-	// renderMouse.pixelRatio = pixelDensity();
-	// Matter.World.add(world, Matter.MouseConstraint.create(engine, {
-	// 	mouse: renderMouse
-	// }));
+    mConstraint = MouseConstraint.create(engine, options)
+    Matter.World.add(world, mConstraint);
 }
 
-let counter = 1;
+function keyPressed() {
+  dots.push(new Dot(mouseX, mouseY, random(10, 40)));
+}
+
+function mousePressed() {
+
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 function draw() {
-	if (counter >= 60) {
-		counter = 0;
-		settled = true;
-	}
-	counter++;
-	background(color(15, 15, 19));
+  background(color(100, 100, 100));
+  boundary.display();
+  for (var i = 0; i < dots.length; i++) {
+    dots[i].show();
+    //Body.applyForce(dots[i].body, {x:dots[i].body.position.x, y: dots[i].body.position.y}, {x: 0.05, y: 0.05})
+    //Body.setAngularVelocity(dots[i].body, 0.1)
+  }
 
-	// Display Boundary
-	boundary.display();
+  //Select Object
+  if(mConstraint.body){
+    body = mConstraint.body
 
-	// Display Creatures
-	generation.species.forEach((creature) => {
-		creature.show();
-		creature.adjust_score();
-		if (counter % 4 === 0 && settled) {
-			creature.think(boundary);
-		}
-	});
+    for (var i = 0; i < dots.length; i++) {
+        if(body.id == dots[i].id){
+          if(dots[i].selected == true){
+            dots[i].selected = false
+          }
+          else
+            dots[i].selected = true
+      }
+    }
+  }
 
-	// Display Stats
-	textSize(18)
-	fill("red");
-	text("Generation: " + generation.generation, 40, 50);
-	text("HighScore: " + generation.high_score.toFixed(2), 40, 70);
-	text("Average Score " + generation.avg_score.toFixed(2), 40, 90);
-	text("Population: " + generation.population, 40, 110);
-	text("Generation Period: " + generationPeriod + " seconds", 40, 130);
-	text("Mutation Rate: " + 5 + "%", 40, 150);
-	text("Progress: " + generation.progress.toFixed(2), 40, 170);
-	
-	// Display Inheritance
-	textSize(14);
-	fill('green');
-	text("Creature\tParentA\t\tParentB", width * 0.78, 40)
-	generation.species.forEach((creature, index) => {
-		let txt = '';
-		if (creature.parents.length !== 0)
-			txt = `${creature.id} \t\t\t ${creature.parents[0].id} (${creature.parents[0].score.toFixed(0)}) \t\t\t ${creature.parents[1].id}(${creature.parents[1].score.toFixed(0)})`;
-		else
-			txt = `${creature.id} \t\t\t ------ \t\t\t ------`
-		text(txt, width * 0.80, 60 + (15 * index));
-	})
-
-	// Run Matter-JS Engine
-	Matter.Engine.update(engine);
+  Matter.Engine.update(engine);
 }

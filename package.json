@@ -1,26 +1,27 @@
 {
-  "name": "darwin",
-  "version": "0.1.0",
-  "private": true,
-  "dependencies": {
-    "bootstrap": "^4.3.1",
-    "react": "^16.8.5",
-    "react-dom": "^16.8.5",
-    "react-scripts": "2.1.8"
+  "name": "EvolutionSimulator",
+  "version": "1.0.0",
+  "description": "- [x] Neural Network\r - [x] Genetic Algorithm\r - [x] Physics Environment",
+  "main": "sketch.js",
+  "directories": {
+    "lib": "lib"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "docs": "jsdoc Models Environments NeuroEvolution -d Docs"
   },
-  "eslintConfig": {
-    "extends": "react-app"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adityathebe/evolutionSimulator.git"
   },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
-  ]
+  "keywords": [],
+  "author": "Aditya Thebe <contact@adityathebe.com> (https://www.adityathebe.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/adityathebe/evolutionSimulator/issues"
+  },
+  "homepage": "https://github.com/adityathebe/evolutionSimulator#readme",
+  "dependencies": {
+    "matter-js": "^0.14.2"
+  }
 }

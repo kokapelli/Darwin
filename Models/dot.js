@@ -1,72 +1,80 @@
 class Dot{
 
-  constructor(posX, posY, radius) {
-    this.posX = posX;
-    this.posY = posY;
-    this.veloX = 0;
-    this.veloY = 0;
-    this.radius = radius;
-    this.acceleration = 0.1;
-    this.max_speed = 5;
-    this.selected = false;
+  constructor(dna) {
+    this.pos = createVector(width/2, height);
+    this.vel = createVector();
+    this.acc = createVector();
 
-  
-    this.body = Bodies.circle(posX, posY, radius, {
-      friction: 1,
-      restitution: 0.6
-    });
-    this.id = this.body.id
+    this.fitness = 0;
+    this.doneTime = 0;
+    this.done = false;
+    this.crashed = false;
+    this.finished = false;
 
-    Matter.World.add(world, this.body);
-
-    this.show = function() {
-      var pos = this.body.position;
-      var angle = this.body.angle;
-      this.move()
-      this.check_boundary()
-
-      push();
-      translate(pos.x, pos.y);
-      rotate(angle);
-      rectMode(CENTER);
-      strokeWeight(1);
-      stroke(255);
-      
-      if(this.selected){
-        fill(0, 255, 0)
-      }
-      else{
-        fill(127);
-      }
-      ellipse(0, 0, this.radius*2); //Body
-      line(0, 0, this.radius, 0)
-      pop();
+    if(dna){
+      this.dna = dna;
+    } else{
+      this.dna = new DNA();
     }
   }
 
-  check_boundary(){
-
+  applyForce(force){
+    this.acc.add(force);
   }
 
+  calculateFitness(){
+    let d = dist(this.pos.x, this.pos.y, target.x, target.y);
+    this.fitness = map(d, 0, width, height, 0);
 
-
-  move(){
-    //console.log(this.body)
-    //this.veloX +=  (1 * this.acceleration)
-    //this.veloY +=  (1 * this.acceleration)
-
-    Body.setVelocity(this.body, {x: this.veloX, y: this.veloY})
-    this.check_speed()
+    if(this.done){
+      this.fitness *= 2;
+      this.fitness *= (this.fitness/this.doneTime)*200;
+    }
+    if(this.crashed){
+      this.fitness *= 0.1;
+    }
   }
 
-  check_speed(){
-    // Clamping the max speed
-    if(this.veloX >= this.max_speed){
-      this.veloX = this.max_speed;
+  update(){
+
+    let d = dist(this.pos.x, this.pos.y, target.x, target.y);
+    if(d < 10){
+      this.done = true;
+      this.doneTime = count;
+      this.calculateFitness();
+      this.finished = true;
+      createP("doneTime: " + this.doneTime)
     }
 
-    if(this.veloY >= this.max_speed){
-      this.veloY = this.max_speed;
+    if(this.pos.x > width || this.pos.x < 0){
+      this.crashed = true;
+      this.calculateFitness();
+      this.finished = true;
     }
+
+    if(this.pos.y > height || this.pos.y < 0){
+      this.crashed = true;
+      this.calculateFitness();
+      this.finished = true;
+    }
+
+    this.applyForce(this.dna.genes[count]);
+    if(!this.done && !this.crashed){
+      this.vel.add(this.acc);
+      this.pos.add(this.vel);
+      this.acc.mult(0);
+      this.vel.limit(4);
+    }
+  }
+
+  show(){
+    push();
+    noStroke();
+    fill(255, 150);
+    translate(this.pos.x, this.pos.y);
+    rotate(this.vel.heading());
+    rectMode(CENTER);
+    ellipse(0, 0, 10);
+    pop();
   }
 }

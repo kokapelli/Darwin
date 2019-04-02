@@ -6,13 +6,11 @@ class Food{
 
     constructor(x, y){
         this.position = createVector(x, y);
-        this.spawnRate = random(0.001, 0.01) // The rate at which new food appears
         this.growthRate = random(0.01, 0.05) // The rate at which the food is becoming more mature
         this.size = 1;                       // Size should grow with time
         this.nutrition = this.size;          // Nutrition should grow with size
-        this.maxSize = random(1, 50)
+        this.maxSize = random(1, 20)
 
-        console.log(this)
     }
 
     update() {

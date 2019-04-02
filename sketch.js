@@ -1,5 +1,6 @@
 let population = [];
 let food = [];
+let foodSpawners = [];
 let poison = [];
 let superFood = null;
 
@@ -30,7 +31,9 @@ function setup() {
         population[i] = new Entity(x, y);
     }
 
-    superFood = new Food(random(width), random(height));
+    for (let i = 0; i < 10; i++) {
+        foodSpawners[i] = new FoodSpawner();
+    }
 }
 
 function draw() {
@@ -42,7 +45,6 @@ function draw() {
         food.push(createVector(x, y));
     }
 
-
     for(var i = 0; i < food.length; i++){
         fill(0, 255, 0);
         noStroke()
@@ -53,6 +55,15 @@ function draw() {
         fill(255, 0, 0);
         noStroke()
         ellipse(poison[i].x, poison[i].y, 8, 8);
+    }
+
+    for(var i = foodSpawners.length-1; i >= 0; i--){
+        foodSpawners[i].update()
+        foodSpawners[i].display()
+        for(let j = foodSpawners[i].fruit.length - 1; j >= 0; j--){
+            foodSpawners[i].fruit[j].update()
+            foodSpawners[i].fruit[j].display()
+        }
     }
 
 
@@ -75,9 +86,4 @@ function draw() {
             population.splice(i, 1);
         }
     }
-
-    superFood.update()
-    superFood.display()
-
-
 }

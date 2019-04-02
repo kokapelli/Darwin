@@ -90,7 +90,9 @@ class Entity{
     let record = Infinity;
     let closest = null;
     for(let i = list.length-1; i >= 0; i--){
+
       let d = this.position.dist(list[i])
+
       if(d < this.maxSpeed) {  //maxSpeed used so the entity does not jump over the object
         list.splice(i, 1);
         this.health += nutrition;
@@ -178,12 +180,13 @@ class Entity{
 
         //Vision
         stroke(255, 255, 255, 100);
-        fill(255, 255, 255, 100);
+        fill(255, 255, 255, 50);
         strokeWeight(4)
         // Decreasing Start and increasing End increases field
         // Start -180 and End 0 equals front 180 vision
         // width and height determines range
-        arc(0, 0, 180, 180, radians(-160), radians(-20)); 
+        // radians(225), radians(315) cone
+        arc(0, 0, 180, 180, radians(180), radians(0)); 
       }
 
       fill(this.intimidation)

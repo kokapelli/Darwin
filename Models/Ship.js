@@ -1,3 +1,11 @@
+//Assign unique ID to each ship to identify bullets
+function uuidv4() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+
 class Ship{
   // TODO
   // Make eating a dynamic activity. Should take as long as the food is big
@@ -9,6 +17,7 @@ class Ship{
       this.r = 6;
       this.maxSpeed = 5;
       this.health;
+      this.id = uuidv4();
   }
 
 
@@ -43,6 +52,12 @@ class Ship{
 
   applyForce(force) {
     this.acceleration.add(force);
+  }
+
+  shoot() {
+    let bullet = new Bullet(this.position, this.velocity, this.id)
+    console.log(this.id, "Fired!")
+    return bullet;
   }
 
   update() {

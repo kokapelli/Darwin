@@ -11,7 +11,10 @@ class Entity{
       this.r = 6;
       this.maxSpeed = 5;
       this.maxForce = 0.5;
-      this.health = 1;
+      this.health = 1; //Should be an inheritant trait
+      this.maxHealth = this.health;
+      this.hunger = 1;
+      this.maxHunger = this.hunger;
       this.intimidation = random(255)
 
       this.dna = [];
@@ -95,7 +98,10 @@ class Entity{
 
       if(d < this.maxSpeed) {  //maxSpeed used so the entity does not jump over the object
         list.splice(i, 1);
-        this.health += nutrition;
+        this.hunger += nutrition;
+        if(this.hunger >= this.maxHunger){ //Clamp hunger
+          this.hunger = this.maxHunger;
+        }
       } else {      
         if(d < record && d < perception){
           record = d;
@@ -130,7 +136,19 @@ class Entity{
   }
 
   update() {
-    this.health -= 0.005;
+
+    this.hunger -= 0.005
+
+    if(this.hunger <= 0){
+      this.health -= 0.005;
+      this.hunger = 0; //Clamping
+    } else {
+      this.health += 0.0005;
+      if(this.health > this.maxHealth){ //Clamping
+        this.health = this.maxHealth;
+      }
+    }
+
     this.velocity.add(this.acceleration);
     this.velocity.limit(this.maxSpeed);
     this.position.add(this.velocity);
@@ -147,17 +165,27 @@ class Entity{
       let h = 4;
       let x = this.position.x - 20; //Offset Bar
       let y = this.position.y + 20; //Offset Bar
-
       stroke(20, 20, 20);
       strokeWeight(1)
-
       //Lost Health
       fill(255, 0, 0);
       rect(x, y, w, h);
-
       // Current Health
       fill(0, 255, 0);
       rect(x, y, w*this.health, h);
+
+      let wHunger = 40;
+      let hHunger = 4;
+      let xHunger = this.position.x - 20; //Offset Bar
+      let yHunger = this.position.y + 24; //Offset Bar
+      stroke(20, 20, 20);
+      strokeWeight(1)
+      //Lost Health
+      fill(255, 0, 0);
+      rect(xHunger, yHunger, wHunger, hHunger);
+      // Current Health
+      fill(255, 255, 0);
+      rect(xHunger, yHunger, wHunger*this.hunger, hHunger);
 
 
       pop()
